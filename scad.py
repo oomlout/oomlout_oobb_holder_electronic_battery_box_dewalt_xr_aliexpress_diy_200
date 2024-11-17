@@ -17,7 +17,7 @@ def make_scad(**kwargs):
         #filter = "test"
 
         kwargs["save_type"] = "none"
-        #kwargs["save_type"] = "all"
+        kwargs["save_type"] = "all"
         
         navigation = False
         #navigation = True    
@@ -31,8 +31,8 @@ def make_scad(**kwargs):
     # default variables
     if True:
         kwargs["size"] = "oobb"
-        kwargs["width"] = 1
-        kwargs["height"] = 1
+        kwargs["width"] = 7
+        kwargs["height"] = 7
         kwargs["thickness"] = 3
         
     # project_variables
@@ -105,11 +105,36 @@ def get_base(thing, **kwargs):
     p3["shape"] = f"oobb_holes"
     p3["both_holes"] = True  
     p3["depth"] = depth
-    p3["holes"] = "perimeter"
+    p3["holes"] = ["top", "bottom"]
     #p3["m"] = "#"
     pos1 = copy.deepcopy(pos)         
     p3["pos"] = pos1
     oobb_base.append_full(thing,**p3)
+
+    #add screw_countersunk
+    p3 = copy.deepcopy(kwargs)
+    p3["type"] = "n"
+    p3["shape"] = f"oobb_screw_countersunk"
+    p3["depth"] = depth
+    p3["radius_name"] = "m3"
+    p3["m"] = "#"
+    pos1 = copy.deepcopy(pos)
+    pos1[0] += 18
+    pos1[1] += 33
+    pos2 = copy.deepcopy(pos)
+    pos2[0] += -18
+    pos2[1] += 33
+    pos3 = copy.deepcopy(pos)
+    pos3[0] += 0
+    pos3[1] += -22
+    poss = []
+    poss.append(pos1)
+    poss.append(pos2)
+    poss.append(pos3)
+    p3["pos"] = poss
+    p3["zz"] = "bottom"
+    oobb_base.append_full(thing,**p3)
+
 
     if prepare_print:
         #put into a rotation object
