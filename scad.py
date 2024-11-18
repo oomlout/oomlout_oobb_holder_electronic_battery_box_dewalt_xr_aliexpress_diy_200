@@ -17,7 +17,7 @@ def make_scad(**kwargs):
         #filter = "test"
 
         kwargs["save_type"] = "none"
-        kwargs["save_type"] = "all"
+        #kwargs["save_type"] = "all"
         
         navigation = False
         #navigation = True    
@@ -52,6 +52,11 @@ def make_scad(**kwargs):
         #p3["thickness"] = 6
         part["kwargs"] = p3
         part["name"] = "base"
+        parts.append(part)
+
+        part = copy.deepcopy(part)
+        part["kwargs"] = copy.deepcopy(part["kwargs"])
+        part["kwargs"]["thickness"] = 6
         parts.append(part)
 
         
@@ -111,13 +116,8 @@ def get_base(thing, **kwargs):
     p3["pos"] = pos1
     oobb_base.append_full(thing,**p3)
 
-    #add screw_countersunk
-    p3 = copy.deepcopy(kwargs)
-    p3["type"] = "n"
-    p3["shape"] = f"oobb_screw_countersunk"
-    p3["depth"] = depth
-    p3["radius_name"] = "m3"
-    p3["m"] = "#"
+
+    #scre hole positions
     pos1 = copy.deepcopy(pos)
     pos1[0] += 18
     pos1[1] += 33
@@ -131,9 +131,37 @@ def get_base(thing, **kwargs):
     poss.append(pos1)
     poss.append(pos2)
     poss.append(pos3)
-    p3["pos"] = poss
-    p3["zz"] = "bottom"
-    oobb_base.append_full(thing,**p3)
+    
+    if depth == 3:
+        #add screw_countersunk
+        p3 = copy.deepcopy(kwargs)
+        p3["type"] = "n"
+        p3["shape"] = f"oobb_screw_countersunk"
+        p3["depth"] = depth
+        p3["radius_name"] = "m3"
+        #p3["m"] = "#"
+        p3["pos"] = poss        
+        p3["zz"] = "bottom"
+        oobb_base.append_full(thing,**p3)
+    else:
+        #add screw_countersunk
+        p3 = copy.deepcopy(kwargs)
+        p3["type"] = "n"
+        p3["shape"] = f"oobb_nut"
+        p3["depth"] = depth
+        p3["radius_name"] = "m3"
+        p3["hole"] = True
+        p3["overhang"] = True
+        p3["clearance"] = "top"
+        #p3["m"] = "#"
+        poss[0][2] = depth - 3
+        poss[1][2] = depth - 3
+        poss[2][2] = depth - 3
+        p3["pos"] = poss        
+        p3["zz"] = "bottom"
+        oobb_base.append_full(thing,**p3)
+
+
 
 
     if prepare_print:
